@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ChatIo</string>
+    <string name="login_screen">login_screen</string>
+    <string name="example_icon">Icon alert</string>
+</resources>
