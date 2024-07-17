@@ -1,11 +1,11 @@
 package com.drabatx.chatio.data.domain.repository
 
 import com.drabatx.chatio.data.model.response.LoginResponse
-import com.drabatx.chatio.data.model.response.RegisterResponse
 import com.drabatx.chatio.utils.Result
 import kotlinx.coroutines.flow.Flow
 
-interface LoginRepository{
+interface LoginRepository {
     suspend fun login(username: String, password: String): Flow<Result<LoginResponse>>
-    suspend fun register(userName: String, password: String): Flow<Result<RegisterResponse>>
+    suspend fun register(userName: String, password: String): Flow<Result<LoginResponse>>
+    suspend fun isLogged(): Flow<Boolean>
 }

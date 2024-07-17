@@ -95,4 +95,5 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.paging.compose)
     implementation(libs.hilt.navigation.compose)
+    implementation(libs.lottie.compose)
 }

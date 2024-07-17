@@ -2,7 +2,9 @@ package com.drabatx.chatio.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.drabatx.chatio.data.domain.usecase.IsLoggedUseCase
 import com.drabatx.chatio.data.domain.usecase.LoginUseCase
+import com.drabatx.chatio.data.domain.usecase.RegisterUseCase
 import com.drabatx.chatio.data.model.response.LoginResponse
 import com.drabatx.chatio.utils.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,17 +14,28 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val registerUseCase: RegisterUseCase,
+    private val isLoggedUseCase: IsLoggedUseCase
+) : ViewModel() {
 
-    enum class LOGINSTATE {
+    enum class LOGIN_STATE {
         INITIAL, ERROR_EMAIL, ERROR_PASSWORD, SUCCESS
+    }
+
+    enum class LOGIN_OPERATION {
+        LOGIN, REGISTER
     }
 
     private val _loginMutableStateFlow = MutableStateFlow<Result<LoginResponse>>(Result.Initial)
     val loginStateFlow: StateFlow<Result<LoginResponse>> get() = _loginMutableStateFlow
 
-    private val _isValidData = MutableStateFlow<LOGINSTATE>(LOGINSTATE.INITIAL)
-    val isValidData: StateFlow<LOGINSTATE> get() = _isValidData
+    private val _isValidData = MutableStateFlow(LOGIN_STATE.INITIAL)
+    val isValidData: StateFlow<LOGIN_STATE> get() = _isValidData
+
+    private val _isLoggedStateFlow = MutableStateFlow(false)
+    val isLoggedStateFlow: StateFlow<Boolean> get() = _isLoggedStateFlow
 
     private fun login(userName: String, password: String) {
         viewModelScope.launch {
@@ -34,21 +47,55 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
                 _loginMutableStateFlow.value = Result.Error(Throwable("Failed login: ${e.message}"))
             }
         }
-
     }
 
-    fun resetForm(){
-        _isValidData.value = LOGINSTATE.INITIAL
+    fun register(userName: String, password: String) {
+        viewModelScope.launch {
+            try {
+                registerUseCase(userName, password).collect { result ->
+                    _loginMutableStateFlow.value = result
+                }
+            } catch (e: Exception) {
+                _loginMutableStateFlow.value =
+                    Result.Error(Throwable("Failed register: ${e.message}"))
+            }
+        }
     }
 
-    fun isValidData(emailAddress: String, password: String) {
+    fun resetForm() {
+        _isValidData.value = LOGIN_STATE.INITIAL
+    }
+
+    fun isValidData(
+        emailAddress: String,
+        password: String,
+        operation: LOGIN_OPERATION? = LOGIN_OPERATION.LOGIN
+    ) {
         return if (!isEmailCorrect(emailAddress)) {
-            _isValidData.value = LOGINSTATE.ERROR_EMAIL
+            _isValidData.value = LOGIN_STATE.ERROR_EMAIL
         } else if (!isPasswordCorrect(password)) {
-            _isValidData.value = LOGINSTATE.ERROR_PASSWORD
+            _isValidData.value = LOGIN_STATE.ERROR_PASSWORD
         } else {
-            _isValidData.value = LOGINSTATE.SUCCESS
-            login(emailAddress, password)
+            _isValidData.value = LOGIN_STATE.SUCCESS
+            when (operation) {
+                LOGIN_OPERATION.LOGIN -> {
+                    login(emailAddress, password)
+                }
+
+                LOGIN_OPERATION.REGISTER -> {
+                    register(emailAddress, password)
+                }
+
+                null -> {}
+            }
+        }
+    }
+
+    fun isLogged() {
+        viewModelScope.launch {
+            isLoggedUseCase().collect {
+                _isLoggedStateFlow.value = it
+            }
         }
     }
 
@@ -61,5 +108,5 @@ class LoginViewModel @Inject constructor(private val loginUseCase: LoginUseCase)
         val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d).+\$")
         return passwordRegex.matches(password)
     }
-
 }
+

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ChatIo</string>
-    <string name="login_screen">login_screen</string>
+    <string name="login_screen">LoginScreen</string>
     <string name="example_icon">Icon alert</string>
     <string name="label_welcome">Bienvenido</string>
     <string name="action_sign_in">Registrarse</string>
@@ -15,4 +15,7 @@
     <string name="error">Error</string>
     <string name="error_login">Error al iniciar sesion</string>
     <string name="success">Exito</string>
+    <string name="show_password">Mostrar contraseña</string>
+    <string name="loading">Cargando...</string>
+    <string name="chat_screen">ChatScreen</string>
 </resources>

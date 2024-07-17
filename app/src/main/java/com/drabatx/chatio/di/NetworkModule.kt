@@ -1,12 +1,17 @@
 package com.drabatx.chatio.di
 
 
+import android.content.Context
+import android.content.SharedPreferences
+import com.drabatx.chatio.data.domain.repository.AutenticateRepository
+import com.drabatx.chatio.data.domain.repository.AutenticateRepositoryImpl
 import com.drabatx.chatio.data.domain.repository.LoginRepository
 import com.drabatx.chatio.data.domain.repository.LoginRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -47,7 +52,22 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLoginRepository(firebaseAuth: FirebaseAuth): LoginRepository {
-        return LoginRepositoryImpl(firebaseAuth)
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAutenticateRepository(sharedPreferences: SharedPreferences): AutenticateRepository {
+        return AutenticateRepositoryImpl(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginRepository(
+        firebaseAuth: FirebaseAuth,
+        autenticateRepository: AutenticateRepository
+    ): LoginRepository {
+        return LoginRepositoryImpl(firebaseAuth, autenticateRepository)
     }
 }

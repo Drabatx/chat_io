@@ -1,5 +1,6 @@
 package com.drabatx.chatio.presentation.view.dialogs
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -9,8 +10,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.window.DialogProperties
 import com.drabatx.chatio.R
 
@@ -27,6 +30,7 @@ fun MessageDialog(
 ) {
     var showDialogR by remember { mutableStateOf(showDialog) }
     if (showDialogR) {
+
         AlertDialog(
             icon = {
                 icon?.let {
@@ -37,7 +41,7 @@ fun MessageDialog(
                 Text(text = title)
             },
             text = {
-                Text(text = text)
+                Text(text = text, textAlign = TextAlign.Justify, modifier = Modifier.fillMaxWidth())
             },
             onDismissRequest = {
                 showDialogR = false

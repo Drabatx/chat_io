@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,13 +15,19 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +43,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Text
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.drabatx.chatio.R
+import com.drabatx.chatio.data.model.response.LoginResponse
+import com.drabatx.chatio.presentation.navigation.AppScreens
 import com.drabatx.chatio.presentation.view.dialogs.LoadingDialog
 import com.drabatx.chatio.presentation.view.dialogs.MessageDialog
 import com.drabatx.chatio.presentation.view.theme.margin_big
@@ -62,46 +75,60 @@ fun LoginScreenPreview() {
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val isValidData by loginViewModel.isValidData.collectAsState()
     val loginState by loginViewModel.loginStateFlow.collectAsState()
-
+    val isLogged by loginViewModel.isLoggedStateFlow.collectAsState()
+    LaunchedEffect(key1 = true) {
+        loginViewModel.isLogged()
+    }
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
-        when (loginState) {
-            is Result.Loading -> {
-                LoadingDialog(true)
-            }
-
-            is Result.Error -> {
-                val message = ((loginState as Result.Error).exception.message)
-                    ?: stringResource(R.string.error_login)
-                MessageDialog(
-                    title = stringResource(id = R.string.error),
-                    text = message,
-                    showDialog = true,
-                    onConfirm = { loginViewModel.resetForm() },
-                    secondaryButtonText = stringResource(
-                        id = R.string.accept
-                    )
-                )
-            }
-
-            is Result.Success -> {
-                MessageDialog(
-                    title = stringResource(id = R.string.success), text = stringResource(
-                        id = R.string.success
-                    ), showDialog = true
-                )
-            }
-
-            else -> {}
+        if (isLogged) {
+            navController.navigate(AppScreens.ChatScreen.route)
+        } else {
+            LoginStateResult(loginState, loginViewModel, navController)
+            LoginView(innerPadding, loginViewModel, isValidData)
         }
-        LoginView(innerPadding, loginViewModel, isValidData)
     })
+}
+
+@Composable
+private fun LoginStateResult(
+    loginState: Result<LoginResponse>,
+    loginViewModel: LoginViewModel,
+    navController: NavController
+) {
+    when (loginState) {
+        is Result.Loading -> {
+            LoadingDialog(true)
+        }
+
+        is Result.Error -> {
+            val message = (loginState.exception.message)
+                ?: stringResource(R.string.error_login)
+            MessageDialog(
+                title = stringResource(id = R.string.error),
+                text = message,
+                showDialog = true,
+                onConfirm = { loginViewModel.resetForm() },
+                secondaryButtonText = stringResource(
+                    id = R.string.accept
+                )
+            )
+
+        }
+
+        is Result.Success -> {
+            navController.navigate(AppScreens.ChatScreen.route)
+        }
+
+        else -> {
+        }
+    }
 }
 
 @Composable
 private fun LoginView(
     innerPadding: PaddingValues,
     loginViewModel: LoginViewModel,
-    isValidData: LoginViewModel.LOGINSTATE
+    isValidData: LoginViewModel.LOGIN_STATE
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -110,9 +137,14 @@ private fun LoginView(
             .imePadding()
     ) {
         val imeBottom = WindowInsets.ime.getBottom(LocalDensity.current)
-        val (background, logo, form) = createRefs()
+        val (background, logo, form, welcomeAnimation) = createRefs()
         Background(modifier = Modifier.constrainAs(background) {
             top.linkTo(parent.top)
+            bottom.linkTo(parent.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        })
+        WelcomeAnimation(modifier = Modifier.constrainAs(welcomeAnimation) {
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
@@ -127,6 +159,7 @@ private fun LoginView(
             })
         }
         FormularioLogin(
+            isValidData = isValidData,
             modifier = Modifier.constrainAs(form) {
                 top.linkTo(parent.top)
                 bottom.linkTo(parent.bottom)
@@ -134,13 +167,18 @@ private fun LoginView(
                 end.linkTo(parent.end)
             },
             onLoginClick = { email, password ->
-                loginViewModel.isValidData(email, password)
+                loginViewModel.isValidData(email, password, LoginViewModel.LOGIN_OPERATION.LOGIN)
             },
-            onRegisterClick = {
+            onRegisterClick = { email, password ->
+                loginViewModel.isValidData(
+                    emailAddress = email,
+                    password = password,
+                    operation = LoginViewModel.LOGIN_OPERATION.REGISTER
+                )
             }
         )
         when (isValidData) {
-            LoginViewModel.LOGINSTATE.ERROR_EMAIL -> {
+            LoginViewModel.LOGIN_STATE.ERROR_EMAIL -> {
                 MessageDialog(
                     title = stringResource(id = R.string.title_erro_email_incorrect),
                     text = stringResource(
@@ -152,7 +190,7 @@ private fun LoginView(
                 )
             }
 
-            LoginViewModel.LOGINSTATE.ERROR_PASSWORD -> {
+            LoginViewModel.LOGIN_STATE.ERROR_PASSWORD -> {
                 MessageDialog(
                     title = stringResource(id = R.string.title_erro_password_incorrect),
                     text = stringResource(
@@ -184,11 +222,13 @@ fun Background(modifier: Modifier) {
 @Composable
 fun FormularioLogin(
     onLoginClick: (String, String) -> Unit,
-    onRegisterClick: () -> Unit,
-    modifier: Modifier
+    onRegisterClick: (String, String) -> Unit,
+    modifier: Modifier,
+    isValidData: LoginViewModel.LOGIN_STATE
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
 
     Column(
         modifier = modifier
@@ -200,6 +240,12 @@ fun FormularioLogin(
             ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        var passwordVisible by remember { mutableStateOf(false) }
+        var password by remember { mutableStateOf("") }
+        val icon = if (passwordVisible)
+            Icons.Filled.Visibility
+        else
+            Icons.Filled.VisibilityOff
         Text(
             text = stringResource(R.string.label_welcome),
             style = MaterialTheme.typography.headlineMedium,
@@ -234,7 +280,15 @@ fun FormularioLogin(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             },
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = stringResource(R.string.show_password)
+                    )
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Done,
@@ -260,7 +314,7 @@ fun FormularioLogin(
         }
         Spacer(modifier = Modifier.height(height = margin_medium))
         OutlinedButton(
-            onClick = onRegisterClick,
+            onClick = { onRegisterClick(email, password) },
             modifier = Modifier.fillMaxWidth(),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(1f))
         ) {
@@ -292,4 +346,16 @@ fun LogoView(modifier: Modifier) {
 
         )
     }
+}
+
+@Composable
+fun WelcomeAnimation(modifier: Modifier) {
+    val preloaderLottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.welcome_anim))
+    LottieAnimation(
+        composition = preloaderLottie,
+        iterations = Int.MAX_VALUE,
+        modifier = modifier
+            .height(150.dp)
+            .aspectRatio(1f)
+    )
 }
