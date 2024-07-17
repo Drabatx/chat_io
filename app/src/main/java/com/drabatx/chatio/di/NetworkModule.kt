@@ -1,6 +1,9 @@
 package com.drabatx.chatio.di
 
 
+import com.drabatx.chatio.data.domain.repository.LoginRepository
+import com.drabatx.chatio.data.domain.repository.LoginRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -34,5 +37,17 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginRepository(firebaseAuth: FirebaseAuth): LoginRepository {
+        return LoginRepositoryImpl(firebaseAuth)
     }
 }

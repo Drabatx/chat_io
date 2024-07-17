@@ -2,4 +2,17 @@
     <string name="app_name">ChatIo</string>
     <string name="login_screen">login_screen</string>
     <string name="example_icon">Icon alert</string>
+    <string name="label_welcome">Bienvenido</string>
+    <string name="action_sign_in">Registrarse</string>
+    <string name="label_login">Iniciar Sesión</string>
+    <string name="password">Contraseña</string>
+    <string name="email">Email</string>
+    <string name="error_password_incorrect">La contraseña debe contener al menos una mayuscula y uun numero</string>
+    <string name="title_erro_password_incorrect">Contraseña no valida</string>
+    <string name="accept">Aceptar</string>
+    <string name="title_erro_email_incorrect">Email invalido</string>
+    <string name="error_email_incorrect">El correo electronico no es valido.</string>
+    <string name="error">Error</string>
+    <string name="error_login">Error al iniciar sesion</string>
+    <string name="success">Exito</string>
 </resources>

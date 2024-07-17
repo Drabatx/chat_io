@@ -4,6 +4,7 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.daggerHilt)
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.googleGmsGoogleServices)
 }
 
 android {
@@ -64,6 +65,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material.core)
     implementation(libs.androidx.compose.material)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

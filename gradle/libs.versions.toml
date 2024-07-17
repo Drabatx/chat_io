@@ -22,6 +22,8 @@ constraintVersion = "1.0.1"
 hiltNavigationCompose = "1.2.0"
 composeMaterialCore = "1.3.1"
 composeMaterial = "1.3.1"
+googleGmsGoogleServices = "4.4.2"
+firebaseAuth = "23.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,10 +57,12 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "pagingcompose" }
 androidx-compose-material-core = { group = "androidx.wear.compose", name = "compose-material-core", version.ref = "composeMaterialCore" }
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 
 [plugins]
 android_application = { id = "com.android.application", version.ref = "agp" }
 jetbrains_kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 daggerHilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerVersion" }
 mapsplatformSecret = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "mapsPlatformSecrets" }
+googleGmsGoogleServices = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 

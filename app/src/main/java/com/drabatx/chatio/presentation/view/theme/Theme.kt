@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
-private val BaseColor = Color(0xFF02830F)
+private val BaseColor = Color(0xFFAD37E5)
 private val DarkColorScheme = darkColorScheme(
     primary = BaseColor,
     secondary = BaseColor.copy(alpha = 0.8f),

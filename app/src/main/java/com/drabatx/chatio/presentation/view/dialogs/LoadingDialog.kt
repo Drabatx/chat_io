@@ -19,7 +19,6 @@ import androidx.compose.ui.window.DialogProperties
 
 
 @Composable
-
 fun LoadingDialog(isLoading: Boolean) {
     var showDialog by remember { mutableStateOf(isLoading) }
     Dialog(
