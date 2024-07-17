@@ -34,8 +34,8 @@ class LoginViewModel @Inject constructor(
     private val _isValidData = MutableStateFlow(LOGIN_STATE.INITIAL)
     val isValidData: StateFlow<LOGIN_STATE> get() = _isValidData
 
-    private val _isLoggedStateFlow = MutableStateFlow(false)
-    val isLoggedStateFlow: StateFlow<Boolean> get() = _isLoggedStateFlow
+    private val _isLoggedStateFlow = MutableStateFlow<Result<Boolean>>(Result.Loading)
+    val isLoggedStateFlow: StateFlow<Result<Boolean>> get() = _isLoggedStateFlow
 
     private fun login(userName: String, password: String) {
         viewModelScope.launch {
@@ -93,8 +93,8 @@ class LoginViewModel @Inject constructor(
 
     fun isLogged() {
         viewModelScope.launch {
-            isLoggedUseCase().collect {
-                _isLoggedStateFlow.value = it
+            isLoggedUseCase().collect { result->
+                _isLoggedStateFlow.value = result
             }
         }
     }

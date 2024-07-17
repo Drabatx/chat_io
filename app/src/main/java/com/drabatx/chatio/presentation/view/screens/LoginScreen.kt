@@ -80,12 +80,23 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
         loginViewModel.isLogged()
     }
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
-        if (isLogged) {
-            navController.navigate(AppScreens.ChatScreen.route)
-        } else {
-            LoginStateResult(loginState, loginViewModel, navController)
-            LoginView(innerPadding, loginViewModel, isValidData)
+        when (isLogged) {
+            is Result.Loading -> {
+                LoadingDialog(true)
+            }
+
+            is Result.Initial -> {
+                LoginStateResult(loginState, loginViewModel, navController)
+                LoginView(innerPadding, loginViewModel, isValidData)
+            }
+
+            is Result.Success -> {
+                navController.navigate(AppScreens.ChatScreen.route)
+            }
+
+            else -> {}
         }
+
     })
 }
 
