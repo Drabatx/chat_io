@@ -13,3 +13,4 @@ fun ChatScreen() {
         Text(text = "Chat Screen", modifier = Modifier.padding(innerPadding))
     })
 }
+

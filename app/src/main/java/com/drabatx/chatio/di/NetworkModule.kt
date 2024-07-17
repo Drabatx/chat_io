@@ -58,8 +58,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAutenticateRepository(sharedPreferences: SharedPreferences): AutenticateRepository {
-        return AutenticateRepositoryImpl(sharedPreferences)
+    fun provideAutenticateRepository(sharedPreferences: SharedPreferences, firebaseAuth: FirebaseAuth): AutenticateRepository {
+        return AutenticateRepositoryImpl(sharedPreferences, firebaseAuth)
     }
 
     @Provides

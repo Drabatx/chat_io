@@ -59,6 +59,4 @@ class LoginRepositoryImpl @Inject constructor(
             emit(Result.Error(e))
         }
     }
-
-    override fun isLogged() = autenticateRepository.isLogged()
 }
