@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class IsLoggedUseCase @Inject constructor(private val repository: LoginRepository) {
-    suspend operator fun invoke(): Flow<Result<Boolean>> {
+    operator fun invoke(): Boolean {
         return repository.isLogged()
     }
 }

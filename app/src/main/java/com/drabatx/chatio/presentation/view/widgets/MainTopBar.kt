@@ -38,18 +38,6 @@ fun MainTopBar() {
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary
         ),
-//        navigationIcon = {
-//            Icon(
-//                painter = painterResource(id = R.drawable.logo_chat_filled),
-//                contentDescription = "Logo",
-//                modifier = Modifier
-//                    .fillMaxHeight()
-//                    .aspectRatio(1f)
-//                    .offset(x = margin_small),
-//                tint = MaterialTheme.colorScheme.onPrimary // Ajusta el color del icono si es necesario
-//            )
-//        }
-
     )
 }
 
@@ -63,10 +51,4 @@ fun TopAppBarTransparente() {
             containerColor = Color.Transparent
         )
     )
-}
-
-@Preview
-@Composable
-fun MainTopBarPreview() {
-    MainTopBar()
 }

@@ -60,13 +60,5 @@ class LoginRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun isLogged(): Flow<Result<Boolean>> = flow {
-        try {
-            emit(Result.Loading)
-            delay(2000L)
-            emit(Result.Success(autenticateRepository.isLogged()))
-        } catch (e: Exception) {
-            emit(Result.Initial)
-        }
-    }
+    override fun isLogged() = autenticateRepository.isLogged()
 }

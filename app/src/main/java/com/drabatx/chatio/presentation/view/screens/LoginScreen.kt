@@ -75,28 +75,16 @@ fun LoginScreenPreview() {
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val isValidData by loginViewModel.isValidData.collectAsState()
     val loginState by loginViewModel.loginStateFlow.collectAsState()
-    val isLogged by loginViewModel.isLoggedStateFlow.collectAsState()
-    LaunchedEffect(key1 = true) {
-        loginViewModel.isLogged()
+    LaunchedEffect(Unit) {
+        if (loginViewModel.isLogged()) {
+            navController.navigate(AppScreens.ChatScreen.route)
+        }
     }
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
-        when (isLogged) {
-            is Result.Loading -> {
-                LoadingDialog(true)
-            }
-
-            is Result.Initial -> {
-                LoginStateResult(loginState, loginViewModel, navController)
-                LoginView(innerPadding, loginViewModel, isValidData)
-            }
-
-            is Result.Success -> {
-                navController.navigate(AppScreens.ChatScreen.route)
-            }
-
-            else -> {}
+        if (!loginViewModel.isLogged()) {
+            LoginStateResult(loginState, loginViewModel, navController)
+            LoginView(innerPadding, loginViewModel, isValidData)
         }
-
     })
 }
 

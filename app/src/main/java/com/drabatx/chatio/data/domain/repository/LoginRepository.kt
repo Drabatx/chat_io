@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface LoginRepository {
     suspend fun login(username: String, password: String): Flow<Result<LoginResponse>>
     suspend fun register(userName: String, password: String): Flow<Result<LoginResponse>>
-    suspend fun isLogged():  Flow<Result<Boolean>>
+    fun isLogged(): Boolean
 }

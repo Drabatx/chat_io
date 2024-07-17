@@ -15,9 +15,9 @@ class AutenticateRepositoryImpl(private val sharedPreferences: SharedPreferences
         }
     }
 
-    override suspend fun isLogged(): Boolean = withContext(Dispatchers.IO) {
+    override fun isLogged(): Boolean =
         sharedPreferences.getBoolean(NetworkConstants.IS_LOGGED, false)
-    }
+
 
     override suspend fun logout() = withContext(Dispatchers.IO) {
         with(sharedPreferences.edit()) {
