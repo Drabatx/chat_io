@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,5 +99,7 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lottie.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.1")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
 
 }

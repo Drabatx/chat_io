@@ -12,5 +12,7 @@ object AppConstants {
 
     const val DEFAULT_IMAGE =
         "https://firebasestorage.googleapis.com/v0/b/chatio-99c95.appspot.com/o/default-avatar.png?alt=media&token=d4010a7f-eadb-4459-bf03-f2ac3ffc2a73"
+    const val BASE_GOOGLE_MAPS_URL = "https://www.google.com/maps/"
+    const val MAPS_LINK = "$BASE_GOOGLE_MAPS_URL?api=1&query="
 
 }

@@ -45,7 +45,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -55,7 +54,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.drabatx.chatio.R
-import com.drabatx.chatio.data.model.response.LoginResponse
 import com.drabatx.chatio.presentation.navigation.AppScreens
 import com.drabatx.chatio.presentation.view.dialogs.LoadingDialog
 import com.drabatx.chatio.presentation.view.dialogs.MessageDialog
@@ -66,82 +64,67 @@ import com.drabatx.chatio.presentation.view.widgets.TopAppBarTransparente
 import com.drabatx.chatio.presentation.viewmodels.LoginViewModel
 import com.drabatx.chatio.utils.Result
 
-@Preview
-@Composable
-fun LoginScreenPreview() {
-//    LoginScreen()
-}
-
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val isValidData by loginViewModel.isValidData.collectAsState()
     val loginState by loginViewModel.loginStateFlow.collectAsState()
     val hasNavigated = remember { mutableStateOf(false) }
+    val isLogged by loginViewModel.isLoggedStateFlow.collectAsState(initial = false)
 
-    LaunchedEffect(Unit) {
-        GoToChatScreen(loginViewModel, hasNavigated, navController)
-    }
+
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
-        if (!loginViewModel.isLogged()) {
-            LoginStateResult(loginState, loginViewModel, navController, hasNavigated)
-            LoginView(innerPadding, loginViewModel, isValidData)
+        LoginView(innerPadding = innerPadding, loginViewModel = loginViewModel, isValidData = isValidData)
+        if (!isLogged) {
+            when (loginState) {
+                is Result.Loading -> {
+                    LoadingDialog(true)
+                }
+
+                is Result.Error -> {
+                    val message = ((loginState as Result.Error).exception.message)
+                        ?: stringResource(R.string.error_login)
+                    MessageDialog(
+                        title = stringResource(id = R.string.error),
+                        text = message,
+                        showDialog = true,
+                        onConfirm = { loginViewModel.resetForm() },
+                        secondaryButtonText = stringResource(
+                            id = R.string.accept
+                        )
+                    )
+
+                }
+
+                is Result.Success -> {
+                    GoToChatScreen(hasNavigated, navController)
+                }
+
+                else -> {}
+            }
         } else {
             GoToChatScreen(
-                loginViewModel = loginViewModel,
                 hasNavigated = hasNavigated,
                 navController = navController
             )
         }
     })
-}
 
-private fun GoToChatScreen(
-    loginViewModel: LoginViewModel,
-    hasNavigated: MutableState<Boolean>,
-    navController: NavController
-) {
-    if (loginViewModel.isLogged() && !hasNavigated.value) {
-        hasNavigated.value = true
-        navController.navigate(AppScreens.ChatScreen.route){
-            popUpTo(AppScreens.LoginScreen.route){
-                inclusive = true
-            }
-        }
+    LaunchedEffect(Unit) {
+        loginViewModel.isLogged()
     }
 }
 
-@Composable
-private fun LoginStateResult(
-    loginState: Result<LoginResponse>,
-    loginViewModel: LoginViewModel,
-    navController: NavController,
-    hasNavigated: MutableState<Boolean>
+private fun GoToChatScreen(
+    hasNavigated: MutableState<Boolean>,
+    navController: NavController
 ) {
-    when (loginState) {
-        is Result.Loading -> {
-            LoadingDialog(true)
+    if (!hasNavigated.value) {
+        hasNavigated.value = true
+        navController.navigate(AppScreens.ChatScreen.route) {
+            popUpTo(AppScreens.LoginScreen.route) {
+                inclusive = true
+            }
         }
-
-        is Result.Error -> {
-            val message = (loginState.exception.message)
-                ?: stringResource(R.string.error_login)
-            MessageDialog(
-                title = stringResource(id = R.string.error),
-                text = message,
-                showDialog = true,
-                onConfirm = { loginViewModel.resetForm() },
-                secondaryButtonText = stringResource(
-                    id = R.string.accept
-                )
-            )
-
-        }
-
-        is Result.Success -> {
-            GoToChatScreen(loginViewModel, hasNavigated, navController)
-        }
-
-        else -> {}
     }
 }
 
@@ -165,11 +148,11 @@ private fun LoginView(
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         })
-        WelcomeAnimation(modifier = Modifier.constrainAs(welcomeAnimation) {
-            bottom.linkTo(parent.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        })
+//        WelcomeAnimation(modifier = Modifier.constrainAs(welcomeAnimation) {
+//            bottom.linkTo(parent.bottom)
+//            start.linkTo(parent.start)
+//            end.linkTo(parent.end)
+//        })
         if (imeBottom == 0) {
             LogoView(modifier = Modifier.constrainAs(logo) {
                 top.linkTo(parent.top)
@@ -270,7 +253,7 @@ fun FormularioLogin(
         Text(
             text = stringResource(R.string.label_welcome),
             style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(Alignment.Start)
                 .fillMaxWidth()
@@ -281,7 +264,7 @@ fun FormularioLogin(
             label = {
                 Text(
                     stringResource(R.string.email),
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.primary
                 )
             },
             modifier = Modifier.fillMaxWidth(),
@@ -298,7 +281,7 @@ fun FormularioLogin(
             label = {
                 Text(
                     stringResource(R.string.password),
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.primary
                 )
             },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -337,7 +320,7 @@ fun FormularioLogin(
         OutlinedButton(
             onClick = { onRegisterClick(email, password) },
             modifier = Modifier.fillMaxWidth(),
-            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(1f))
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
         ) {
             Text(
                 stringResource(R.string.action_sign_in),
@@ -361,7 +344,7 @@ fun LogoView(modifier: Modifier) {
         Text(
             text = stringResource(id = R.string.app_name),
             style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
 

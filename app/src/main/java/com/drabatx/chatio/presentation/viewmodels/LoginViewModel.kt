@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
@@ -91,7 +90,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun isLogged() = isLoggedUseCase()
+    fun isLogged(){
+        _isLoggedStateFlow.value = isLoggedUseCase()
+    }
 
 
     private fun isEmailCorrect(emailAddress: String): Boolean {
@@ -105,4 +106,5 @@ class LoginViewModel @Inject constructor(
     }
 
 }
+
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ChatIo</string>
+    <string name="app_name">Chat Io</string>
     <string name="login_screen">LoginScreen</string>
     <string name="example_icon">Icon alert</string>
     <string name="label_welcome">Bienvenido</string>
@@ -18,4 +18,7 @@
     <string name="show_password">Mostrar contraseña</string>
     <string name="loading">Cargando...</string>
     <string name="chat_screen">ChatScreen</string>
+    <string name="fileprovider">com.drabatx.chatio.fileprovider</string>
+    <string name="splash_screen">Splash screen</string>
+
 </resources>

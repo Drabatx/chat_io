@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.drabatx.chatio.presentation.view.screens.ChatScreen
 import com.drabatx.chatio.presentation.view.screens.LoginScreen
+import com.drabatx.chatio.presentation.view.screens.SplashScreen
 import com.drabatx.chatio.presentation.viewmodels.ChatViewModel
 import com.drabatx.chatio.presentation.viewmodels.LoginViewModel
 
@@ -15,7 +16,10 @@ fun AppNavigation() {
     val navController = rememberNavController()
     val loginViewModel: LoginViewModel = viewModel()
     val chatViewModel: ChatViewModel = viewModel()
-    NavHost(navController = navController, startDestination = AppScreens.LoginScreen.route) {
+    NavHost(navController = navController, startDestination = AppScreens.SplashScreen.route) {
+        composable(route = AppScreens.SplashScreen.route) {
+            SplashScreen(navController = navController)
+        }
         composable(route = AppScreens.LoginScreen.route) {
             LoginScreen(navController = navController, loginViewModel = loginViewModel)
         }

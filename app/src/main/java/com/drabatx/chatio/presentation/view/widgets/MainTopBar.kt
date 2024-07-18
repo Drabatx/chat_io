@@ -48,7 +48,7 @@ fun MainTopBar(onLogoutClick: () -> Unit) {
             Text(
                 text = stringResource(id = R.string.app_name),
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -58,13 +58,10 @@ fun MainTopBar(onLogoutClick: () -> Unit) {
                 Icon(
                     Icons.Filled.Logout,
                     contentDescription = "Cerrar sesion",
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
+        }
     )
 }
 

@@ -26,6 +26,7 @@ googleGmsGoogleServices = "4.4.2"
 firebaseAuth = "23.0.0"
 lottieCompose = "4.0.0"
 firebaseDatabase = "21.0.0"
+firebaseStorage = "21.0.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -61,6 +62,7 @@ androidx-compose-material = { group = "androidx.wear.compose", name = "compose-m
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
 [plugins]
 android_application = { id = "com.android.application", version.ref = "agp" }
 jetbrains_kotlin_android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
