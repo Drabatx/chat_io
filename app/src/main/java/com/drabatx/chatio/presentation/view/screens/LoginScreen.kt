@@ -70,10 +70,15 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val loginState by loginViewModel.loginStateFlow.collectAsState()
     val hasNavigated = remember { mutableStateOf(false) }
     val isLogged by loginViewModel.isLoggedStateFlow.collectAsState(initial = false)
-
-
+    LaunchedEffect(Unit) {
+        loginViewModel.isLogged()
+    }
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
-        LoginView(innerPadding = innerPadding, loginViewModel = loginViewModel, isValidData = isValidData)
+        LoginView(
+            innerPadding = innerPadding,
+            loginViewModel = loginViewModel,
+            isValidData = isValidData
+        )
         if (!isLogged) {
             when (loginState) {
                 is Result.Loading -> {
@@ -96,30 +101,31 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
                 }
 
                 is Result.Success -> {
-                    GoToChatScreen(hasNavigated, navController)
+                    GoToChatScreen(loginViewModel, hasNavigated, navController)
                 }
 
                 else -> {}
             }
         } else {
             GoToChatScreen(
+                loginViewModel = loginViewModel,
                 hasNavigated = hasNavigated,
                 navController = navController
             )
         }
     })
 
-    LaunchedEffect(Unit) {
-        loginViewModel.isLogged()
-    }
+
 }
 
 private fun GoToChatScreen(
+    loginViewModel: LoginViewModel,
     hasNavigated: MutableState<Boolean>,
     navController: NavController
 ) {
     if (!hasNavigated.value) {
         hasNavigated.value = true
+        loginViewModel.resetData()
         navController.navigate(AppScreens.ChatScreen.route) {
             popUpTo(AppScreens.LoginScreen.route) {
                 inclusive = true

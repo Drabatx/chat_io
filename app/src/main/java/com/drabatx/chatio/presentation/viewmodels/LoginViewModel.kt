@@ -91,7 +91,9 @@ class LoginViewModel @Inject constructor(
     }
 
     fun isLogged(){
-        _isLoggedStateFlow.value = isLoggedUseCase()
+        viewModelScope.launch {
+            _isLoggedStateFlow.value = isLoggedUseCase()
+        }
     }
 
 
@@ -103,6 +105,12 @@ class LoginViewModel @Inject constructor(
     private fun isPasswordCorrect(password: String): Boolean {
         val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d).+\$")
         return passwordRegex.matches(password)
+    }
+
+    fun resetData() {
+        _loginMutableStateFlow.value = Result.Initial
+        _isValidData.value = LOGIN_STATE.INITIAL
+        _isLoggedStateFlow.value = false
     }
 
 }
