@@ -22,7 +22,7 @@ data class MessageModel(
         fun setUser(userModel: SenderModel) = apply { this.userModel = userModel }
         fun setIsThisUser(isThisUser: Boolean) = apply { this.isThisUser = isThisUser }
 
-        fun build() = MessageModel(text, sender, timestamp, imageUrl)
+        fun build() = MessageModel(text, sender, timestamp, imageUrl, userModel, isThisUser)
     }
 
     // Optionally, you can define a companion object for easier usage

@@ -1,6 +1,7 @@
 package com.drabatx.chatio.presentation.view.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.safeContent
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -30,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +57,7 @@ import com.drabatx.chatio.presentation.view.widgets.RoundIconButton
 import com.drabatx.chatio.presentation.viewmodels.ChatViewModel
 import com.drabatx.chatio.utils.FormatTimestamp
 import com.drabatx.chatio.utils.Result
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -167,8 +171,10 @@ fun ChatBoxPreview() {
 
 @Composable
 fun MessageList(messages: List<MessageModel>, modifier: Modifier) {
-    LazyColumn(
-    ) {
+    val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LazyColumn(state = listState, reverseLayout = true, verticalArrangement = Arrangement.Bottom) {
         items(messages.size) { index ->
             val message = messages[index]
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
@@ -234,6 +240,9 @@ fun MessageList(messages: List<MessageModel>, modifier: Modifier) {
                 Spacer(modifier = Modifier.padding(top = margin_small))
             }
         }
+//        coroutineScope.launch {
+//            listState.scrollToItem(index = messages.size-1)
+//        }
     }
 }
 

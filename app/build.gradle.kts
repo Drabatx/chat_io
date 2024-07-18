@@ -97,4 +97,6 @@ dependencies {
     implementation(libs.paging.compose)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.lottie.compose)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.1")
+
 }
