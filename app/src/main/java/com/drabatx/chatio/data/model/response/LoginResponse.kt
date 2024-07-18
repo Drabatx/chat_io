@@ -1,3 +1,5 @@
 package com.drabatx.chatio.data.model.response
 
-data class LoginResponse(val message: String, val email:String)
+import com.drabatx.chatio.data.model.UserModel
+
+data class LoginResponse(val message: String, val userModel: UserModel)

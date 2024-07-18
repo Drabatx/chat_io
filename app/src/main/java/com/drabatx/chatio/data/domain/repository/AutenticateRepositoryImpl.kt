@@ -3,37 +3,49 @@ package com.drabatx.chatio.data.domain.repository
 import android.content.SharedPreferences
 import com.drabatx.chatio.data.mappers.FirebaseUserToUserModelMapper
 import com.drabatx.chatio.data.model.UserModel
-import com.drabatx.chatio.di.NetworkConstants
+import com.drabatx.chatio.di.AppConstants
 import com.drabatx.chatio.utils.Result
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 class AutenticateRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
     private val firebaseAuth: FirebaseAuth
 ) :
     AutenticateRepository {
-    override suspend fun saveLogin(email: String, isLogged: Boolean) {
+    override fun startSession(userModel: UserModel, isLogged: Boolean) {
         with(sharedPreferences.edit()) {
-            putString(NetworkConstants.EMAIL, email)
-            putBoolean(NetworkConstants.IS_LOGGED, isLogged)
+            putString(AppConstants.NAME, userModel.name)
+            putString(AppConstants.AVATAR, userModel.avatar)
+            putString(AppConstants.ID, userModel.id)
+            putString(AppConstants.EMAIL, userModel.email)
+            putBoolean(AppConstants.IS_LOGGED, isLogged)
             apply()
         }
     }
 
     override fun isLogged(): Boolean =
-        sharedPreferences.getBoolean(NetworkConstants.IS_LOGGED, false)
+        sharedPreferences.getBoolean(AppConstants.IS_LOGGED, false)
 
 
-    override suspend fun logout() = withContext(Dispatchers.IO) {
-        with(sharedPreferences.edit()) {
+    override fun logout() {
+        sharedPreferences.edit().apply {
             clear()
-            apply()
+            commit()
+        }
+    }
+
+    override fun getCurrentUser(): UserModel {
+        with(sharedPreferences) {
+            return UserModel(
+                name = getString(AppConstants.NAME, "") ?: "",
+                avatar = getString(AppConstants.AVATAR, "") ?: "",
+                id = getString(AppConstants.ID, "") ?: "",
+                email = getString(AppConstants.EMAIL, "") ?: ""
+            )
         }
     }
 

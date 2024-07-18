@@ -2,7 +2,6 @@ package com.drabatx.chatio.data.domain.usecase
 
 import com.drabatx.chatio.data.domain.repository.LoginRepository
 import com.drabatx.chatio.data.model.response.LoginResponse
-import com.drabatx.chatio.data.model.response.RegisterResponse
 import com.drabatx.chatio.utils.Result
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

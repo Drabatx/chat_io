@@ -59,7 +59,8 @@ fun LoadingDialog(isLoading: Boolean) {
                 AnimatedPreloader()
                 Text(
                     text = stringResource(R.string.loading),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
         }
@@ -69,11 +70,6 @@ fun LoadingDialog(isLoading: Boolean) {
 @Composable
 fun AnimatedPreloader() {
     val preloaderLottie by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loading_anim))
-    val preloaderProgress by animateLottieCompositionAsState(
-        preloaderLottie,
-        iterations = LottieConstants.IterateForever,
-        isPlaying = true
-    )
     LottieAnimation(
         composition = preloaderLottie,
         iterations = Int.MAX_VALUE,

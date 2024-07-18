@@ -5,19 +5,17 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.drabatx.chatio.data.domain.repository.AutenticateRepository
 import com.drabatx.chatio.data.domain.repository.AutenticateRepositoryImpl
+import com.drabatx.chatio.data.domain.repository.ChatRepository
+import com.drabatx.chatio.data.domain.repository.ChatRepositoryImpl
 import com.drabatx.chatio.data.domain.repository.LoginRepository
 import com.drabatx.chatio.data.domain.repository.LoginRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -25,29 +23,14 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .addInterceptor(Interceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("accept", "application/json")
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            })
-            .build()
-        return Retrofit.Builder().baseUrl(NetworkConstants.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
     }
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance()
+    fun provideFirebaseDatabase(): FirebaseDatabase {
+        return FirebaseDatabase.getInstance()
     }
 
     @Provides
@@ -58,7 +41,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAutenticateRepository(sharedPreferences: SharedPreferences, firebaseAuth: FirebaseAuth): AutenticateRepository {
+    fun provideAutenticateRepository(
+        sharedPreferences: SharedPreferences,
+        firebaseAuth: FirebaseAuth
+    ): AutenticateRepository {
         return AutenticateRepositoryImpl(sharedPreferences, firebaseAuth)
     }
 
@@ -66,8 +52,21 @@ object NetworkModule {
     @Singleton
     fun provideLoginRepository(
         firebaseAuth: FirebaseAuth,
-        autenticateRepository: AutenticateRepository
+        autenticateRepository: AutenticateRepository, firebaseDatabase: FirebaseDatabase
     ): LoginRepository {
-        return LoginRepositoryImpl(firebaseAuth, autenticateRepository)
+        return LoginRepositoryImpl(
+            firebaseAuth,
+            autenticateRepository,
+            firebaseDatabase = firebaseDatabase
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideChatRepository(
+        firebaseDatabase: FirebaseDatabase,
+        autenticateRepository: AutenticateRepository
+    ): ChatRepository {
+        return ChatRepositoryImpl(firebaseDatabase, autenticateRepository)
     }
 }

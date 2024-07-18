@@ -1,17 +1,11 @@
 package com.drabatx.chatio.data.model
 
 
-import com.google.gson.annotations.SerializedName
-
 data class UserModel(
-    @SerializedName("displayName")
-    val name: String,
-    @SerializedName("email")
-    val email: String,
-    @SerializedName("photoUrl")
-    val avatar: String,
-    @SerializedName("uid")
-    val id: String
+    val name: String? = "",
+    val email: String? = "",
+    val avatar: String? = "",
+    val id: String? = ""
 ) {
     class Builder {
         private var name: String = ""

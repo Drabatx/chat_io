@@ -13,10 +13,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val BaseColor = Color(0xFFAD37E5)
+private val BackgroundColor = Color(0xFF5E5E5E)
 private val DarkColorScheme = darkColorScheme(
     primary = BaseColor,
     secondary = BaseColor.copy(alpha = 0.8f),
-    tertiary = BaseColor.copy(alpha = 0.6f),
+    tertiary = BackgroundColor.copy(alpha = 0.6f),
     onPrimary = Color.White, // Color de texto sobre el color primario
     onSecondary = Color.White, // Color de texto sobre el color secundario
     onTertiary = Color.White // Color de texto sobre el color terciario
@@ -25,7 +26,7 @@ private val DarkColorScheme = darkColorScheme(
 private val LightColorScheme = lightColorScheme(
     primary = BaseColor.copy(alpha = 0.5f),
     secondary = BaseColor.copy(alpha = 0.3f),
-    tertiary = BaseColor.copy(alpha = 0.1f),
+    tertiary = BackgroundColor.copy(alpha = 0.1f),
     onPrimary = Color.Black, // Color de texto sobre el color primario
     onSecondary = Color.Black, // Color de texto sobre el color secundario
     onTertiary = Color.Black // Color de texto sobre el color terciario

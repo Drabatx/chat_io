@@ -5,9 +5,10 @@ import com.drabatx.chatio.utils.Result
 import kotlinx.coroutines.flow.Flow
 
 interface AutenticateRepository {
-    suspend fun saveLogin(email: String, isLogged: Boolean)
+    fun startSession(userModel: UserModel, isLogged: Boolean)
     fun isLogged(): Boolean
-    suspend fun logout()
+    fun getCurrentUser(): UserModel
+    fun logout()
     suspend fun getCurrentUserSession(): Flow<Result<UserModel>>
 
 }

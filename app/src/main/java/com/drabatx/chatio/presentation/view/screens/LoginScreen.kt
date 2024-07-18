@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,24 +76,46 @@ fun LoginScreenPreview() {
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
     val isValidData by loginViewModel.isValidData.collectAsState()
     val loginState by loginViewModel.loginStateFlow.collectAsState()
+    val hasNavigated = remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
-        if (loginViewModel.isLogged()) {
-            navController.navigate(AppScreens.ChatScreen.route)
-        }
+        GoToChatScreen(loginViewModel, hasNavigated, navController)
     }
     Scaffold(topBar = { TopAppBarTransparente() }, content = { innerPadding ->
         if (!loginViewModel.isLogged()) {
-            LoginStateResult(loginState, loginViewModel, navController)
+            LoginStateResult(loginState, loginViewModel, navController, hasNavigated)
             LoginView(innerPadding, loginViewModel, isValidData)
+        } else {
+            GoToChatScreen(
+                loginViewModel = loginViewModel,
+                hasNavigated = hasNavigated,
+                navController = navController
+            )
         }
     })
+}
+
+private fun GoToChatScreen(
+    loginViewModel: LoginViewModel,
+    hasNavigated: MutableState<Boolean>,
+    navController: NavController
+) {
+    if (loginViewModel.isLogged() && !hasNavigated.value) {
+        hasNavigated.value = true
+        navController.navigate(AppScreens.ChatScreen.route){
+            popUpTo(AppScreens.LoginScreen.route){
+                inclusive = true
+            }
+        }
+    }
 }
 
 @Composable
 private fun LoginStateResult(
     loginState: Result<LoginResponse>,
     loginViewModel: LoginViewModel,
-    navController: NavController
+    navController: NavController,
+    hasNavigated: MutableState<Boolean>
 ) {
     when (loginState) {
         is Result.Loading -> {
@@ -115,11 +138,10 @@ private fun LoginStateResult(
         }
 
         is Result.Success -> {
-            navController.navigate(AppScreens.ChatScreen.route)
+            GoToChatScreen(loginViewModel, hasNavigated, navController)
         }
 
-        else -> {
-        }
+        else -> {}
     }
 }
 
